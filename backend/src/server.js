@@ -9,7 +9,7 @@ const socketIo = require('socket.io');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 const db = require('./config/database');
-const createDefaultAdmin = require('./utils/createAdmin');
+const { initializeAdmin } = require('./utils/initAdmin');
 
 // Import routes
 const authRoutes = require('./routes/auth.routes');
@@ -132,8 +132,8 @@ const PORT = process.env.PORT || 3000;
 // Test database connection before starting server
 db.testConnection()
   .then(async () => {
-    // Create default admin account
-    await createDefaultAdmin();
+    // Initialize default admin account from environment
+    await initializeAdmin();
     
     server.listen(PORT, () => {
       console.log('═══════════════════════════════════════');
