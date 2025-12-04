@@ -30,16 +30,19 @@ const server = http.createServer(app);
 // Initialize Socket.io
 const io = socketIo(server, {
   cors: {
-    origin: process.env.CORS_ORIGIN || '*',
-    methods: ['GET', 'POST']
+    origin: ['http://localhost:8080', 'http://localhost:3000', 'http://127.0.0.1:8080', process.env.CORS_ORIGIN].filter(Boolean),
+    methods: ['GET', 'POST'],
+    credentials: true
   }
 });
 
 // Middleware
 app.use(helmet()); // Security headers
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
-  credentials: true
+  origin: ['http://localhost:8080', 'http://localhost:3000', 'http://127.0.0.1:8080', process.env.CORS_ORIGIN].filter(Boolean),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(compression()); // Compress responses
 app.use(express.json());

@@ -24,8 +24,50 @@ class ProfileScreen extends StatelessWidget {
         builder: (context, authProvider, child) {
           final user = authProvider.user;
 
-          if (user == null) {
-            return const Center(child: Text('Loading...'));
+          // Show login prompt for guests
+          if (!authProvider.isAuthenticated || user == null) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.account_circle_outlined,
+                      size: 100,
+                      color: Colors.grey[400],
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Sign in to view your profile',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Access your favorites, messages, and property listings',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pushNamed(context, '/login'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: JoJoTheme.standPurple,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 48,
+                          vertical: 16,
+                        ),
+                      ),
+                      child: const Text('Sign In'),
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
 
           return SingleChildScrollView(

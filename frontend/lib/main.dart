@@ -9,6 +9,7 @@ import 'providers/favorite_provider.dart';
 import 'screens/splash_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home/home_screen.dart';
+import 'screens/admin/admin_dashboard_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +46,7 @@ class HeavensDoorApp extends StatelessWidget {
         routes: {
           '/login': (context) => const LoginScreen(),
           '/home': (context) => const HomeScreen(),
+          '/admin/dashboard': (context) => const AdminDashboardScreen(),
         },
       ),
     );

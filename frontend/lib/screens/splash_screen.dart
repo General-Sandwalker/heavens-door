@@ -42,9 +42,16 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
 
     if (authProvider.isAuthenticated) {
-      Navigator.pushReplacementNamed(context, '/home');
+      // Route based on user role
+      if (authProvider.user?.role == 'admin' ||
+          authProvider.user?.role == 'super_admin') {
+        Navigator.pushReplacementNamed(context, '/admin/dashboard');
+      } else {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
     } else {
-      Navigator.pushReplacementNamed(context, '/login');
+      // Allow guest to browse - go to home
+      Navigator.pushReplacementNamed(context, '/home');
     }
   }
 

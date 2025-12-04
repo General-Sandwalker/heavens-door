@@ -32,9 +32,11 @@ class User {
       phone: json['phone'],
       avatarUrl: json['avatarUrl'],
       bio: json['bio'],
-      role: json['role'],
+      role: json['role'] ?? 'user',
       isVerified: json['isVerified'] ?? false,
-      createdAt: DateTime.parse(json['createdAt']),
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
     );
   }
 
