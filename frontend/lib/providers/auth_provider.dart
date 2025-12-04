@@ -1,128 +1,97 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/material.dart';
 import '../models/user.dart';
-import '../services/api_client.dart';
+import '../services/api_service.dart';
 
 class AuthProvider with ChangeNotifier {
-  final ApiClient _apiClient = ApiClient();
-  final _storage = const FlutterSecureStorage();
+  final ApiService _apiService = ApiService();
 
   User? _user;
-  String? _token;
   bool _isLoading = false;
-  bool _isAuthenticated = false;
+  String? _error;
 
   User? get user => _user;
-  String? get token => _token;
   bool get isLoading => _isLoading;
-  bool get isAuthenticated => _isAuthenticated;
+  String? get error => _error;
+  bool get isAuthenticated => _user != null;
 
-  // Check if user is already logged in
-  Future<void> checkAuth() async {
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      _token = await _storage.read(key: 'auth_token');
-      if (_token != null) {
-        // Fetch user profile
-        final response = await _apiClient.getProfile();
-        _user = User.fromJson(response.data);
-        _isAuthenticated = true;
-      }
-    } catch (e) {
-      print('Auth check error: $e');
-      await logout();
-    }
-
-    _isLoading = false;
-    notifyListeners();
-  }
-
-  // Register new user
-  Future<bool> register({
+  // Sign up
+  Future<bool> signup({
     required String email,
+    required String username,
     required String password,
-    required String firstName,
-    required String lastName,
-    String? phone,
+    String? fullName,
   }) async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
 
     try {
-      final response = await _apiClient.register({
-        'email': email,
-        'password': password,
-        'firstName': firstName,
-        'lastName': lastName,
-        'phone': phone,
-      });
-
-      _token = response.data['token'];
-      _user = User.fromJson(response.data['user']);
-      _isAuthenticated = true;
-
-      await _storage.write(key: 'auth_token', value: _token!);
-
+      final authResponse = await _apiService.signup(
+        email: email,
+        username: username,
+        password: password,
+        fullName: fullName,
+      );
+      _user = authResponse.user;
       _isLoading = false;
       notifyListeners();
       return true;
     } catch (e) {
-      print('Registration error: $e');
+      _error = e.toString().replaceAll('Exception: ', '');
       _isLoading = false;
       notifyListeners();
       return false;
     }
   }
 
-  // Login user
+  // Login
   Future<bool> login({required String email, required String password}) async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
 
     try {
-      final response = await _apiClient.login({
-        'email': email,
-        'password': password,
-      });
-
-      _token = response.data['token'];
-      _user = User.fromJson(response.data['user']);
-      _isAuthenticated = true;
-
-      await _storage.write(key: 'auth_token', value: _token!);
-
+      final authResponse = await _apiService.login(
+        email: email,
+        password: password,
+      );
+      _user = authResponse.user;
       _isLoading = false;
       notifyListeners();
       return true;
     } catch (e) {
-      print('Login error: $e');
+      _error = e.toString().replaceAll('Exception: ', '');
       _isLoading = false;
       notifyListeners();
       return false;
     }
   }
 
-  // Logout user
+  // Load user from token
+  Future<void> loadUser() async {
+    try {
+      final hasToken = await _apiService.verifyToken();
+      if (hasToken) {
+        _user = await _apiService.getCurrentUser();
+        notifyListeners();
+      }
+    } catch (e) {
+      _user = null;
+      notifyListeners();
+    }
+  }
+
+  // Logout
   Future<void> logout() async {
+    await _apiService.logout();
     _user = null;
-    _token = null;
-    _isAuthenticated = false;
-    await _storage.delete(key: 'auth_token');
+    _error = null;
     notifyListeners();
   }
 
-  // Update profile
-  Future<bool> updateProfile(Map<String, dynamic> data) async {
-    try {
-      final response = await _apiClient.updateProfile(data);
-      _user = User.fromJson(response.data['user']);
-      notifyListeners();
-      return true;
-    } catch (e) {
-      print('Update profile error: $e');
-      return false;
-    }
+  // Clear error
+  void clearError() {
+    _error = null;
+    notifyListeners();
   }
 }

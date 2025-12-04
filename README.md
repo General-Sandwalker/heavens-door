@@ -1,223 +1,188 @@
-# 🌟 Heaven's Door - Real Estate Application 🌟
+# RentOnline - Flutter + FastAPI + MySQL
 
-<p align="center">
-  <img src="https://i.imgur.com/heavens-door-logo.png" alt="Heaven's Door Logo" width="200"/>
-</p>
+A full-stack rental marketplace application with Flutter frontend, FastAPI backend, and MySQL database.
 
-> *"Heaven's Door has the ability to turn people into books, reading their memories and experiences. Similarly, our app opens the door to your dream property!"*
-
-A JoJo-themed cross-platform real estate application that enables users to search, view, and publish property listings with integrated messaging, geolocation, favorites, and user profiles.
-
-## ✨ Stand Powers (Features)
-
-### 🏠 **Property Stand**
-- 🔍 Search and filter properties by price, location, and type
-- 📸 View property details with photo galleries
-- 📝 Publish listings for sale or rent
-- 🗺️ Interactive map-based property localization
-
-### 👤 **User Stand**
-- 🔐 User registration and profile management
-- ⭐ Save favorite properties
-- 🔔 Receive notifications
-- 💬 In-app messaging between users
-
-### 🎨 **JoJo Theme**
-- Stand-inspired UI elements
-- Character-themed color schemes
-- Menacing UI effects
-- JoJo references throughout the app
-
-## 🏗️ Architecture
-
-This project follows the **C4 Model** for software architecture visualization:
-- **System Context**: Overview of Heaven's Door and its users
-- **Container**: Frontend (Flutter), Backend (Node.js/Express), Database (PostgreSQL)
-- **Component**: Detailed breakdown of each container's internal structure
-
-See `/docs/architecture/` for complete C4 diagrams.
-
-## 🛠️ Technical Stack
-
-### Frontend
-- **Flutter** - Cross-platform mobile and web development
-- **Dart** - Programming language
-- **Provider/Riverpod** - State management
-- **Google Maps Flutter** - Map integration
-- **Dio** - HTTP client
-
-### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **PostgreSQL 17** - Relational database
-- **JWT** - Authentication
-- **bcrypt** - Password hashing
-- **Socket.io** - Real-time messaging
-
-### Infrastructure
-- **Docker** - Containerization
-- **Docker Compose** - Multi-container orchestration
-- **Nginx** - Reverse proxy (production)
-
-## 📂 Project Structure
+## Project Structure
 
 ```
-heavens-door/
-├── backend/              # Node.js/Express API
-│   ├── src/
-│   │   ├── config/      # Configuration files
-│   │   ├── controllers/ # Route controllers
-│   │   ├── middleware/  # Custom middleware
-│   │   ├── models/      # Database models
-│   │   ├── routes/      # API routes
-│   │   ├── services/    # Business logic
-│   │   └── utils/       # Utility functions
-│   ├── migrations/      # Database migrations
-│   ├── Dockerfile
-│   └── package.json
-├── frontend/            # Flutter application
-│   ├── lib/
-│   │   ├── models/      # Data models
-│   │   ├── screens/     # UI screens
-│   │   ├── services/    # API services
-│   │   ├── widgets/     # Reusable widgets
-│   │   ├── providers/   # State management
-│   │   └── utils/       # Helper functions
-│   └── pubspec.yaml
-├── docs/                # Documentation
-│   ├── architecture/    # C4 diagrams
-│   ├── api/            # API documentation
-│   └── setup/          # Setup guides
-├── docker-compose.yml   # Docker orchestration
-└── README.md
+RentOnline/
+├── frontend/          # Flutter mobile/web application
+├── backend/           # FastAPI REST API
+│   ├── routers/       # API endpoints
+│   ├── main.py        # FastAPI application
+│   ├── models.py      # SQLAlchemy models
+│   ├── schemas.py     # Pydantic schemas
+│   ├── database.py    # Database configuration
+│   └── requirements.txt
+└── docker-compose.yml # Docker orchestration
 ```
 
-## 🚀 Getting Started
+## Prerequisites
 
-### Prerequisites
+- Flutter SDK (3.0+)
+- Python 3.11+
+- MySQL 8.0+ or Docker
+- Docker & Docker Compose (optional, for containerized setup)
 
-- **Arch Linux** (or any Linux distribution)
-- **Docker** and **Docker Compose**
-- **Flutter SDK** (for mobile/web development)
-- **Android SDK** at `~/Android/sdk`
-- **OpenJDK 21**
+## Setup Instructions
 
-### Installation
+### Option 1: Using Docker (Recommended)
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd heavens-door
-   ```
-
-2. **Start the backend with Docker Compose**
+1. **Start the backend and database:**
    ```bash
    docker-compose up -d
    ```
 
-3. **Run database migrations**
-   ```bash
-   docker-compose exec backend npm run migrate
-   ```
+2. **The API will be available at:**
+   - API: http://localhost:8000
+   - API Docs: http://localhost:8000/docs
 
-4. **Set up Flutter frontend**
+3. **Run the Flutter app:**
    ```bash
    cd frontend
    flutter pub get
    flutter run
    ```
 
-### Environment Variables
+### Option 2: Manual Setup
 
-Create `.env` files in both `backend/` and `frontend/` directories:
+#### Backend Setup
 
-**Backend `.env`:**
-```env
-NODE_ENV=development
-PORT=3000
-DATABASE_URL=postgresql://postgres:password@db:5432/heavens_door
-JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRES_IN=7d
-```
+1. **Create a virtual environment:**
+   ```bash
+   cd backend
+   python -m venv venv
+   .\venv\Scripts\activate  # On Windows
+   ```
 
-**Frontend `.env`:**
-```env
-API_BASE_URL=http://localhost:3000/api
-GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-```
+2. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## 📱 Running the Application
+3. **Set up environment variables:**
+   ```bash
+   copy .env.example .env
+   # Edit .env with your MySQL credentials
+   ```
 
-### Backend API
-```bash
-docker-compose up -d
-```
-API will be available at `http://localhost:3000`
+4. **Make sure MySQL is running and create the database:**
+   ```sql
+   CREATE DATABASE rentonline;
+   ```
 
-### Flutter Mobile (Android)
-```bash
-cd frontend
-flutter run
-```
+5. **Run the backend:**
+   ```bash
+   uvicorn main:app --reload
+   ```
 
-### Flutter Web
-```bash
-cd frontend
-flutter run -d chrome
-```
+#### Frontend Setup
 
-## 🧪 Testing
+1. **Navigate to frontend directory:**
+   ```bash
+   cd frontend
+   ```
 
-### Backend Tests
+2. **Install dependencies:**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Run the app:**
+   ```bash
+   flutter run
+   ```
+
+## API Endpoints
+
+- `GET /` - Welcome message
+- `GET /health` - Health check
+- `GET /api/items` - Get all rental items
+- `GET /api/items/{item_id}` - Get specific item
+- `POST /api/items` - Create new item
+- `PUT /api/items/{item_id}` - Update item
+- `DELETE /api/items/{item_id}` - Delete item
+
+## Database Schema
+
+### rental_items
+- `id` - Primary key
+- `title` - Item title
+- `description` - Item description
+- `price_per_day` - Rental price per day
+- `category` - Item category
+- `image_url` - Image URL
+- `owner_name` - Owner's name
+- `owner_contact` - Contact information
+- `created_at` - Creation timestamp
+- `updated_at` - Update timestamp
+
+## Development
+
+### Backend Development
 ```bash
 cd backend
-npm test
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### Flutter Tests
+### Flutter Development
 ```bash
 cd frontend
-flutter test
+flutter run -d chrome  # For web
+flutter run -d windows # For Windows desktop
 ```
 
-## 📖 API Documentation
+### View API Documentation
+Navigate to http://localhost:8000/docs for interactive Swagger documentation.
 
-API documentation is available at:
-- Swagger UI: `http://localhost:3000/api-docs`
-- See `/docs/api/` for detailed endpoint documentation
+## Docker Commands
 
-## 🎯 Development Roadmap
+```bash
+# Start services
+docker-compose up -d
 
-- [x] Project setup and architecture design
-- [x] Docker containerization
-- [x] Database schema design
-- [x] Backend API implementation
-- [x] Flutter frontend setup
-- [x] User authentication
-- [x] Property CRUD operations
-- [x] Search and filtering
-- [x] Map integration
-- [x] Messaging system
-- [x] Favorites functionality
-- [x] Notifications
-- [ ] Unit and integration tests
-- [ ] Performance optimization
-- [ ] Production deployment
+# Stop services
+docker-compose down
 
-## 🤝 Contributing
+# View logs
+docker-compose logs -f
 
-Contributions are welcome! Please read our contributing guidelines before submitting PRs.
+# Rebuild containers
+docker-compose up -d --build
+```
 
-## 📄 License
+## Environment Variables
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Create a `.env` file in the `backend` directory:
 
-## 🎭 JoJo References
+```env
+DATABASE_URL=mysql+pymysql://root:password@localhost:3306/rentonline
+DATABASE_HOST=localhost
+DATABASE_PORT=3306
+DATABASE_USER=root
+DATABASE_PASSWORD=password
+DATABASE_NAME=rentonline
+SECRET_KEY=your-secret-key-here
+```
 
-This application is inspired by Hirohiko Araki's JoJo's Bizarre Adventure. Heaven's Door is a Stand belonging to Rohan Kishibe, a manga artist who can read and write in people's memories.
+## Technologies Used
 
-*"I refuse!"* - Rohan Kishibe
+- **Frontend:** Flutter 3.x, Dart
+- **Backend:** FastAPI, Python 3.11
+- **Database:** MySQL 8.0
+- **ORM:** SQLAlchemy
+- **Validation:** Pydantic
+- **Containerization:** Docker, Docker Compose
 
----
+## Next Steps
 
-Built with 💜 and a lot of Stand energy!
+1. Configure Flutter app to connect to the API endpoint
+2. Implement authentication (JWT)
+3. Add file upload for item images
+4. Create user management
+5. Add booking/reservation system
+6. Implement payment integration
+
+## License
+
+MIT

@@ -1,58 +1,52 @@
 class Property {
-  final String id;
+  final int id;
   final String title;
-  final String description;
+  final String? description;
   final String propertyType;
-  final String listingType;
   final double price;
   final String address;
   final String city;
-  final String? state;
   final String country;
-  final String? postalCode;
-  final double? latitude;
-  final double? longitude;
-  final int? bedrooms;
-  final double? bathrooms;
-  final int? areaSqft;
-  final int? yearBuilt;
-  final String status;
+  final double latitude;
+  final double longitude;
+  final int bedrooms;
+  final int bathrooms;
+  final double? area;
   final List<String> images;
-  final List<String> amenities;
-  final int viewsCount;
-  final int favoriteCount;
-  final bool isFavorited;
-  final PropertyOwner owner;
+  final int ownerId;
+  final String? ownerUsername;
+  final double? averageRating;
+  final int reviewCount;
+  final bool isRented;
+  final DateTime? rentalStartDate;
+  final DateTime? rentalEndDate;
+  final int? rentedToUserId;
   final DateTime createdAt;
-  final DateTime updatedAt;
 
   Property({
     required this.id,
     required this.title,
-    required this.description,
+    this.description,
     required this.propertyType,
-    required this.listingType,
     required this.price,
     required this.address,
     required this.city,
-    this.state,
     required this.country,
-    this.postalCode,
-    this.latitude,
-    this.longitude,
-    this.bedrooms,
-    this.bathrooms,
-    this.areaSqft,
-    this.yearBuilt,
-    required this.status,
+    required this.latitude,
+    required this.longitude,
+    required this.bedrooms,
+    required this.bathrooms,
+    this.area,
     required this.images,
-    required this.amenities,
-    required this.viewsCount,
-    required this.favoriteCount,
-    this.isFavorited = false,
-    required this.owner,
+    required this.ownerId,
+    this.ownerUsername,
+    this.averageRating,
+    required this.reviewCount,
+    this.isRented = false,
+    this.rentalStartDate,
+    this.rentalEndDate,
+    this.rentedToUserId,
     required this.createdAt,
-    required this.updatedAt,
   });
 
   factory Property.fromJson(Map<String, dynamic> json) {
@@ -60,73 +54,125 @@ class Property {
       id: json['id'],
       title: json['title'],
       description: json['description'],
-      propertyType: json['propertyType'],
-      listingType: json['listingType'],
+      propertyType: json['property_type'],
       price: (json['price'] as num).toDouble(),
       address: json['address'],
-      city: json['city'],
-      state: json['state'],
-      country: json['country'],
-      postalCode: json['postalCode'],
-      latitude: json['latitude'] != null
-          ? (json['latitude'] as num).toDouble()
-          : null,
-      longitude: json['longitude'] != null
-          ? (json['longitude'] as num).toDouble()
-          : null,
+      city: json['city'] ?? '',
+      country: json['country'] ?? '',
+      latitude: (json['latitude'] as num).toDouble(),
+      longitude: (json['longitude'] as num).toDouble(),
       bedrooms: json['bedrooms'],
-      bathrooms: json['bathrooms'] != null
-          ? (json['bathrooms'] as num).toDouble()
-          : null,
-      areaSqft: json['areaSqft'],
-      yearBuilt: json['yearBuilt'],
-      status: json['status'],
+      bathrooms: json['bathrooms'],
+      area: json['area'] != null ? (json['area'] as num).toDouble() : null,
       images: List<String>.from(json['images'] ?? []),
-      amenities: List<String>.from(json['amenities'] ?? []),
-      viewsCount: json['viewsCount'] ?? 0,
-      favoriteCount: json['favoriteCount'] ?? 0,
-      isFavorited: json['isFavorited'] ?? false,
-      owner: PropertyOwner.fromJson(json['owner']),
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      ownerId: json['owner_id'],
+      ownerUsername: json['owner_username'],
+      averageRating: json['average_rating'] != null
+          ? (json['average_rating'] as num).toDouble()
+          : null,
+      reviewCount: json['review_count'] ?? 0,
+      isRented: json['is_rented'] ?? false,
+      rentalStartDate: json['rental_start_date'] != null
+          ? DateTime.parse(json['rental_start_date'])
+          : null,
+      rentalEndDate: json['rental_end_date'] != null
+          ? DateTime.parse(json['rental_end_date'])
+          : null,
+      rentedToUserId: json['rented_to_user_id'],
+      createdAt: DateTime.parse(json['created_at']),
     );
   }
 
-  String get priceFormatted => '\$${price.toStringAsFixed(0)}';
-  String get fullAddress => '$address, $city, $country';
-  bool get hasLocation => latitude != null && longitude != null;
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'property_type': propertyType,
+      'price': price,
+      'address': address,
+      'city': city,
+      'country': country,
+      'latitude': latitude,
+      'longitude': longitude,
+      'bedrooms': bedrooms,
+      'bathrooms': bathrooms,
+      'area': area,
+      'images': images,
+      'owner_id': ownerId,
+      'owner_username': ownerUsername,
+      'average_rating': averageRating,
+      'review_count': reviewCount,
+      'created_at': createdAt.toIso8601String(),
+    };
+  }
+
+  String get propertyTypeDisplay {
+    switch (propertyType) {
+      case 'apartment':
+        return 'Apartment';
+      case 'house':
+        return 'House';
+      case 'villa':
+        return 'Villa';
+      case 'studio':
+        return 'Studio';
+      case 'shop':
+        return 'Shop';
+      default:
+        return propertyType;
+    }
+  }
+
+  String get pricePerMonth => '\$${price.toStringAsFixed(0)}/month';
 }
 
-class PropertyOwner {
-  final String id;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String? phone;
-  final String? avatarUrl;
-  final String? bio;
+class PropertyCreate {
+  final String title;
+  final String? description;
+  final String propertyType;
+  final double price;
+  final String address;
+  final String city;
+  final String country;
+  final double latitude;
+  final double longitude;
+  final int bedrooms;
+  final int bathrooms;
+  final double? area;
+  final List<String> images;
 
-  PropertyOwner({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    this.phone,
-    this.avatarUrl,
-    this.bio,
+  PropertyCreate({
+    required this.title,
+    this.description,
+    required this.propertyType,
+    required this.price,
+    required this.address,
+    required this.city,
+    required this.country,
+    required this.latitude,
+    required this.longitude,
+    this.bedrooms = 1,
+    this.bathrooms = 1,
+    this.area,
+    this.images = const [],
   });
 
-  factory PropertyOwner.fromJson(Map<String, dynamic> json) {
-    return PropertyOwner(
-      id: json['id'],
-      firstName: json['firstName'],
-      lastName: json['lastName'],
-      email: json['email'],
-      phone: json['phone'],
-      avatarUrl: json['avatarUrl'],
-      bio: json['bio'],
-    );
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'description': description,
+      'property_type': propertyType,
+      'price': price,
+      'address': address,
+      'city': city,
+      'country': country,
+      'latitude': latitude,
+      'longitude': longitude,
+      'bedrooms': bedrooms,
+      'bathrooms': bathrooms,
+      'area': area,
+      'images': images,
+    };
   }
-
-  String get fullName => '$firstName $lastName';
 }
